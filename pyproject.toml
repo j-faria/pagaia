@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools', 'wheel']
+requires = ["setuptools", "wheel", "setuptools-scm"]
 build-backend = 'setuptools.build_meta'
 
 
@@ -33,3 +33,7 @@ homepage = "https://pagaia.org/"
 documentation = "https://github.com/j-faria/pagaia/docs"
 repository = "https://github.com/j-faria/pagaia"
 changelog = "https://github.com/j-faria/pagaia/blob/main/CHANGES.md"
+
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
