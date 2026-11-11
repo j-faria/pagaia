@@ -1,0 +1,30 @@
+[build-system]
+requires = ['setuptools', 'wheel']
+build-backend = 'setuptools.build_meta'
+
+
+[project]
+name = "pagaia"
+version = "0.0.1"
+readme = { "file" = "README.md", "content-type" = "text/markdown" }
+license-files = ["LICEN[CS]E*"]
+authors = [{ name = "j-faria", email = "j-faria@github.com" }]
+maintainers = [{ name = "j-faria", email = "j-faria@github.com" }]
+description = "pagaia Python package"
+requires-python = ">=3.15"
+classifiers = ["Programming Language :: Python :: 3"]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = [".", "pagaia"]
+include = ["pagaia*"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+
+[project.urls]
+homepage = "https://pagaia.org/"
+documentation = "https://github.com/j-faria/pagaia/docs"
+repository = "https://github.com/j-faria/pagaia"
+changelog = "https://github.com/j-faria/pagaia/blob/main/CHANGES.md"
