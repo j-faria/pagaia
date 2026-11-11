@@ -1,5 +1,3 @@
-__version__ = "0.0.1"
-
 from ._resolve import TableSpec, make_getattr
 
 __getattr__ = make_getattr(

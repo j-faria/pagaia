@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.png"
+  <img src="https://raw.githubusercontent.com/j-faria/pagaia/refs/heads/main/docs/assets/logo.png"
        alt="Pagaia — Python tools for Gaia data"
        width="320">
 </p>
