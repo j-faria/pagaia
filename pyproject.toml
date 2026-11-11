@@ -5,13 +5,11 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = "pagaia"
-version = "0.0.1"
 readme = { "file" = "README.md", "content-type" = "text/markdown" }
 license-files = ["LICEN[CS]E*"]
-authors = [{ name = "j-faria", email = "j-faria@github.com" }]
-maintainers = [{ name = "j-faria", email = "j-faria@github.com" }]
-description = "pagaia Python package"
-requires-python = ">=3.15"
+authors = [{ name = "João Faria", email = "joao.faria@unige.ch" }]
+description = "Python tools for the analysis of Gaia data"
+requires-python = ">=3.12"
 classifiers = ["Programming Language :: Python :: 3"]
 dependencies = [
     "numpy",
@@ -19,6 +17,8 @@ dependencies = [
     "astropy",
     "astroquery",
 ]
+
+dynamic = ["version"]
 
 [tool.setuptools.packages.find]
 where = [".", "pagaia"]
