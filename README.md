@@ -18,3 +18,14 @@ from pagaia import DR3_4472832130942575872 as barnard
 
 from pagaia.nss import DR3_1712614124767394816 as gaia3
 ```
+
+or with aliases
+
+```python
+from pagaia import barnard  # built-in alias
+
+import pagaia
+pagaia.add_alias('my favorite star', 123456789)
+from pagaia import my_favorite_star
+```
+
