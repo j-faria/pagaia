@@ -1,3 +1,5 @@
+__all__ = ["add_alias", "list_aliases"]
+
 from ._aliases import add_alias, list_aliases
 from . import _resolve
 
