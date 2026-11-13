@@ -1,9 +1,10 @@
-from ._resolve import TableSpec, make_getattr
+from ._aliases import add_alias, list_aliases
+from . import _resolve
 
-__getattr__ = make_getattr(
+__getattr__ = _resolve.make_getattr(
     __name__,
     {
-        "DR3": TableSpec("gaiadr3.gaia_source"),
-        "DR4": TableSpec("gaiadr4.gaia_source"),
+        "DR3": _resolve.TableSpec("gaiadr3.gaia_source"),
+        "DR4": _resolve.TableSpec("gaiadr4.gaia_source"),
     },
 )
