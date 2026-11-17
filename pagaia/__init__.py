@@ -1,3 +1,7 @@
+"""
+Python tools for the analysis of Gaia data
+"""
+
 __all__ = ["add_alias", "list_aliases"]
 
 from ._aliases import add_alias, list_aliases

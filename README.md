@@ -29,3 +29,8 @@ pagaia.add_alias('my favorite star', 123456789)
 from pagaia import my_favorite_star
 ```
 
+or querying Simbad
+
+```python
+from pagaia import HD10180
+```

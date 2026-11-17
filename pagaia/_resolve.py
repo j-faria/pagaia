@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from importlib.util import find_spec
 import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Callable
 
-from ._aliases import get_ids
+from . import _simbad
 
 _RELEASE_PREFIX_RE = re.compile(r"^(?P<release>DR\d+)_(?P<rest>.+)$")
 _DIGITS_RE = re.compile(r"^[0-9]+$")
@@ -79,10 +80,20 @@ def _release_number(release: str) -> int:
     return int(release[2:])
 
 
+def _is_submodule(module_name: str, name: str) -> bool:
+    """True for e.g. `nss` in `from pagaia import nss`, which must not hit SIMBAD."""
+    try:
+        return find_spec(f"{module_name}.{name}") is not None
+    except (ImportError, ValueError, AttributeError):
+        return False
+
+
+
 def make_getattr(
     module_name: str,
     specs: dict[str, TableSpec],
     fetch: Callable[[str, str, int], Any] = _fetch,
+    lookup: Callable[[str], dict[str, int]] = _simbad.resolve,
 ) -> Callable[[str], Target]:
     """Build a module-level ``__getattr__``.
 
@@ -91,7 +102,24 @@ def make_getattr(
       * ``DR3_Barnards_Star``        explicit release + alias
       * ``Barnards_Star``            alias; uses the newest release (among the
                                      ones this module supports) that has an id
+
+    Names that are not known aliases are looked up in SIMBAD (``lookup``) and
+    the Gaia ids found are saved as aliases, so each name is resolved over the
+    network only once per machine.
     """
+
+    def simbad_ids(rest: str, known: dict[str, int]) -> dict[str, int]:
+        # Never go to the network for private/dunder probes or for submodules.
+        if rest.startswith("_") or _is_submodule(module_name, rest):
+            return known
+        # Only add releases we don't have yet, so we never overwrite user aliases.
+        found = {r: i for r, i in lookup(rest).items() if r not in known}
+        for release, source_id in found.items():
+            try:
+                add_alias(rest.replace("_", " "), source_id, release)
+            except ValueError:
+                pass  # not usable as an alias name, but still good for this call
+        return {**known, **found}
 
     def __getattr__(name: str) -> Target:
         # Dunder probes (__path__, __wrapped__, ...) must never hit the alias
@@ -113,7 +141,9 @@ def make_getattr(
         else:
             ids = get_ids(rest)
             if not ids:
-                raise AttributeError(f"module {module_name!r} has no attribute {name!r}")
+                ids = simbad_ids(rest, ids)
+                if not ids:
+                    raise AttributeError(f"module {module_name!r} has no attribute {name!r}")
             if release is None:
                 # Newest supported release for which the alias has an id.
                 candidates = sorted(specs, key=_release_number, reverse=True)
@@ -124,10 +154,14 @@ def make_getattr(
                         f"module {module_name!r} only supports {', '.join(sorted(specs))}"
                     )
             elif release not in ids:
-                raise AttributeError(
-                    f"alias {rest!r} has no {release} source_id "
-                    f"(registered: {', '.join(sorted(ids))})"
-                )
+                # The alias may have been cached before this release existed
+                # (e.g. DR4): ask SIMBAD again for the missing release.
+                ids = simbad_ids(rest, ids)
+                if release not in ids:
+                    raise AttributeError(
+                        f"alias {rest!r} has no {release} source_id "
+                        f"(registered: {', '.join(sorted(ids))})"
+                    )
             source_id = ids[release]
 
         spec = specs[release]

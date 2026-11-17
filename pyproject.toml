@@ -15,7 +15,7 @@ dependencies = [
     "numpy",
     "scipy",
     "astropy",
-    "astroquery",
+    "astroquery>=0.4.8",
 ]
 
 dynamic = ["version"]
