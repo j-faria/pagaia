@@ -7,6 +7,8 @@ from functools import lru_cache
 from typing import Any, Callable
 
 from . import _simbad
+from ._aliases import add_alias, get_ids
+from ._columns import ColumnAccessor
 
 _RELEASE_PREFIX_RE = re.compile(r"^(?P<release>DR\d+)_(?P<rest>.+)$")
 _DIGITS_RE = re.compile(r"^[0-9]+$")
@@ -31,6 +33,17 @@ class Target:
     @property
     def columns(self):
         return self.data.colnames
+
+    @property
+    def val(self) -> ColumnAccessor:
+        """ A shortcut `target.val.parallax` -> `target.data["parallax"]` """
+        return ColumnAccessor(self, "")
+
+    @property
+    def err(self) -> ColumnAccessor:
+        """ A shortcut `target.err.parallax` -> `target.data["parallax_error"]` """
+        return ColumnAccessor(self, "_error")
+
     @property
     def simbad_url(self):
         url = "https://simbad.cfa.harvard.edu/simbad/sim-id?Ident={}"
