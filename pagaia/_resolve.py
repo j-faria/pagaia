@@ -31,7 +31,12 @@ class Target:
     @property
     def columns(self):
         return self.data.colnames
-
+    @property
+    def simbad_url(self):
+        url = "https://simbad.cfa.harvard.edu/simbad/sim-id?Ident={}"
+        name = f"Gaia+{self.release}+{self.source_id}"
+        return url.format(name)
+    
     def __getitem__(self, key: str):
         return self.data[key]
 
